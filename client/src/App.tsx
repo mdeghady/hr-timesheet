@@ -6,32 +6,57 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
+// HR Admin Pages
+import HRDashboard from "./pages/hr/HRDashboard";
+import TeamsPage from "./pages/hr/TeamsPage";
+import EmployeesPage from "./pages/hr/EmployeesPage";
+import ManagersPage from "./pages/hr/ManagersPage";
+import TimesheetsPage from "./pages/hr/TimesheetsPage";
+import TimesheetDetailPage from "./pages/hr/TimesheetDetailPage";
+import ExportPage from "./pages/hr/ExportPage";
+import AuditPage from "./pages/hr/AuditPage";
+
+// Manager Pages
+import ManagerHome from "./pages/manager/ManagerHome";
+import TimesheetSubmitPage from "./pages/manager/TimesheetSubmitPage";
+import ManagerHistory from "./pages/manager/ManagerHistory";
+import ManagerTimesheetDetail from "./pages/manager/ManagerTimesheetDetail";
+
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      {/* Landing */}
+      <Route path="/" component={Home} />
+
+      {/* HR Admin Portal */}
+      <Route path="/hr" component={HRDashboard} />
+      <Route path="/hr/teams" component={TeamsPage} />
+      <Route path="/hr/employees" component={EmployeesPage} />
+      <Route path="/hr/managers" component={ManagersPage} />
+      <Route path="/hr/timesheets" component={TimesheetsPage} />
+      <Route path="/hr/timesheets/:id" component={TimesheetDetailPage} />
+      <Route path="/hr/export" component={ExportPage} />
+      <Route path="/hr/audit" component={AuditPage} />
+
+      {/* Manager Portal */}
+      <Route path="/manager" component={ManagerHome} />
+      <Route path="/manager/timesheet" component={TimesheetSubmitPage} />
+      <Route path="/manager/history" component={ManagerHistory} />
+      <Route path="/manager/history/:id" component={ManagerTimesheetDetail} />
+
+      {/* Fallback */}
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
+          <Toaster position="top-right" richColors />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
