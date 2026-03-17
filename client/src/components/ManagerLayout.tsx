@@ -1,6 +1,8 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { useTranslation } from "@/hooks/useTranslation";
+import { LanguageToggle } from "./LanguageToggle";
 import { cn } from "@/lib/utils";
 import {
   ClipboardList,
@@ -13,23 +15,26 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
-const navItems = [
-  { href: "/manager", label: "Home", icon: Home },
-  { href: "/manager/timesheet", label: "Submit", icon: ClipboardList },
-  { href: "/manager/history", label: "History", icon: History },
-];
+// Navigation items will be translated dynamically
 
 export function ManagerLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, isAuthenticated, logout } = useAuth();
+  const { t } = useTranslation();
   const [location] = useLocation();
   const { isOnline, pendingCount } = useOfflineSync();
+
+  const navItems = [
+    { href: "/manager", label: t('dashboard'), icon: Home },
+    { href: "/manager/timesheet", label: t('submitTimesheet'), icon: ClipboardList },
+    { href: "/manager/history", label: t('timesheetHistory'), icon: History },
+  ];
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">Loading…</p>
+          <p className="text-muted-foreground text-sm">{t('loading')}</p>
         </div>
       </div>
     );
@@ -43,12 +48,12 @@ export function ManagerLayout({ children }: { children: React.ReactNode }) {
             <HardHat className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">ConstructHR</h1>
-          <p className="text-muted-foreground mb-8 text-sm">Manager Portal — Sign in to submit timesheets.</p>
+          <p className="text-muted-foreground mb-8 text-sm">{t('managerPortal')}</p>
           <a
             href={getLoginUrl()}
             className="block w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold text-center hover:bg-primary/90 transition-colors"
           >
-            Sign In
+            {t('signIn')}
           </a>
         </div>
       </div>
@@ -63,7 +68,7 @@ export function ManagerLayout({ children }: { children: React.ReactNode }) {
           <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
             <X className="w-8 h-8 text-destructive" />
           </div>
-          <h1 className="text-xl font-bold text-foreground mb-2">Access Denied</h1>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t('accessDenied')}</h1>
           <p className="text-muted-foreground mb-6 text-sm">This portal is for Team Managers only.</p>
           {(role === "hr_admin" || role === "admin") && (
             <Link href="/hr" className="text-primary text-sm hover:underline">
@@ -86,25 +91,27 @@ export function ManagerLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <p className="text-sidebar-foreground font-bold text-sm leading-tight">ConstructHR</p>
-              <p className="text-sidebar-foreground/50 text-xs">Manager Portal</p>
+              <p className="text-sidebar-foreground/50 text-xs">{t('managerPortal')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             {!isOnline && (
               <div className="flex items-center gap-1 bg-amber-500/20 text-amber-400 px-2 py-1 rounded-lg text-xs font-medium">
                 <WifiOff className="w-3 h-3" />
-                Offline
+                {t('offlineMode')}
               </div>
             )}
             {pendingCount > 0 && isOnline && (
               <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-2 py-1 rounded-lg text-xs font-medium">
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                {pendingCount} pending
+                {pendingCount} {t('pendingSync')}
               </div>
             )}
             <button
               onClick={logout}
               className="text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors p-1"
+              title={t('signOut')}
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -117,7 +124,7 @@ export function ManagerLayout({ children }: { children: React.ReactNode }) {
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 flex items-center gap-2">
           <WifiOff className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <p className="text-xs text-amber-700">
-            You're offline. Timesheet entries will be saved locally and synced when connection is restored.
+            {t('timesheetSavedOffline')}
           </p>
         </div>
       )}

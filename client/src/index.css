@@ -129,6 +129,82 @@
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-weight: 700;
   }
+  /* RTL Support */
+  [dir="rtl"] {
+    direction: rtl;
+  }
+  [dir="rtl"] .flex {
+    direction: rtl;
+  }
+  [dir="rtl"] .gap-3 {
+    gap: 0.75rem;
+  }
+  [dir="rtl"] .px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  [dir="rtl"] .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  [dir="rtl"] .px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  [dir="rtl"] .text-start {
+    text-align: right;
+  }
+  [dir="rtl"] .text-end {
+    text-align: left;
+  }
+  [dir="rtl"] .ml-auto {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  [dir="rtl"] .mr-auto {
+    margin-right: auto;
+    margin-left: 0;
+  }
+  [dir="rtl"] .ml-2 {
+    margin-left: 0.5rem;
+    margin-right: 0;
+  }
+  [dir="rtl"] .mr-2 {
+    margin-right: 0.5rem;
+    margin-left: 0;
+  }
+  [dir="rtl"] .ml-3 {
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
+  [dir="rtl"] .mr-3 {
+    margin-right: 0.75rem;
+    margin-left: 0;
+  }
+  [dir="rtl"] .pl-3 {
+    padding-left: 0.75rem;
+    padding-right: 0;
+  }
+  [dir="rtl"] .pr-3 {
+    padding-right: 0.75rem;
+    padding-left: 0;
+  }
+  [dir="rtl"] .pl-4 {
+    padding-left: 1rem;
+    padding-right: 0;
+  }
+  [dir="rtl"] .pr-4 {
+    padding-right: 1rem;
+    padding-left: 0;
+  }
+  [dir="rtl"] .pl-6 {
+    padding-left: 1.5rem;
+    padding-right: 0;
+  }
+  [dir="rtl"] .pr-6 {
+    padding-right: 1.5rem;
+    padding-left: 0;
+  }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),

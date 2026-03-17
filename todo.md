@@ -62,3 +62,15 @@
 ## Phase 7: Delivery
 - [x] Final checkpoint saved
 - [x] Documentation delivered to user
+
+
+## Phase 8: Arabic Translation & RTL Support
+- [x] Create i18n infrastructure with English and Arabic translation files
+- [x] Build LanguageContext and useLanguage hook
+- [x] Add language toggle button to all layouts
+- [x] Translate all HR Admin pages to Arabic
+- [x] Translate all Manager pages to Arabic
+- [x] Implement RTL layout: flip sidebar, adjust spacing, mirror icons where needed
+- [x] Update CSS for RTL: text-align, margin/padding directions
+- [x] Test both languages on mobile and desktop
+- [x] Verify all forms, buttons, and labels work in RTL
