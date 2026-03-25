@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { ScrollText, User, Clock } from "lucide-react";
 
@@ -37,6 +38,7 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 export default function AuditPage() {
+  const { t } = useTranslation();
   const { data: logs, isLoading } = trpc.audit.logs.useQuery({ limit: 200 });
 
   return (

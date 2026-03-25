@@ -1,10 +1,12 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ManagerLayout } from "@/components/ManagerLayout";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ClipboardList, ChevronRight, AlertTriangle } from "lucide-react";
 import { Link } from "wouter";
 
 export default function ManagerHistory() {
+  const { t } = useTranslation();
   const { data: timesheets, isLoading } = trpc.timesheets.myTimesheets.useQuery();
 
   return (

@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +53,7 @@ const emptyForm: EmployeeForm = {
 };
 
 export default function EmployeesPage() {
+  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: employees, isLoading } = trpc.employees.all.useQuery();
   const { data: teams } = trpc.teams.all.useQuery();

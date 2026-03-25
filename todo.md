@@ -74,3 +74,23 @@
 - [x] Update CSS for RTL: text-align, margin/padding directions
 - [x] Test both languages on mobile and desktop
 - [x] Verify all forms, buttons, and labels work in RTL
+
+
+## Phase 9: Complete Website Translation (All Pages)
+- [x] Translate HRDashboard page completely
+- [x] Translate TeamsPage with all CRUD dialogs
+- [x] Translate EmployeesPage with all forms
+- [x] Translate ManagersPage with all management UI
+- [x] Translate TimesheetsPage with review interface
+- [x] Translate TimesheetDetailPage
+- [x] Translate ExportPage with report options
+- [x] Translate AuditPage with log display
+- [x] Translate ManagerHome page
+- [x] Translate TimesheetSubmitPage with form
+- [x] Translate ManagerHistory page
+- [x] Translate ManagerTimesheetDetail page
+- [x] Translate all error messages and validation text
+- [x] Translate all toast notifications
+- [x] Translate all modal/dialog titles and buttons
+- [x] Test all pages in Arabic mode
+- [x] Verify RTL layout on all pages

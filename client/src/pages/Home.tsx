@@ -1,10 +1,12 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { getLoginUrl } from "@/const";
 import { HardHat, ClipboardList, Users, BarChart3, Shield, WifiOff, ArrowRight } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user, loading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
 

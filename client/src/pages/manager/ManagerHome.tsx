@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ManagerLayout } from "@/components/ManagerLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useOfflineSync } from "@/hooks/useOfflineSync";
@@ -6,6 +7,7 @@ import { ClipboardList, Users, CheckCircle2, AlertTriangle, ArrowRight } from "l
 import { Link } from "wouter";
 
 export default function ManagerHome() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isOnline, pendingCount } = useOfflineSync();
   const { data: myTeam } = trpc.manager.myTeam.useQuery();

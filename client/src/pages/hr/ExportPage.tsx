@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ function getDateRange(type: ReportType): { start: string; end: string } {
 }
 
 export default function ExportPage() {
+  const { t } = useTranslation();
   const { data: teams } = trpc.teams.all.useQuery();
   const [reportType, setReportType] = useState<ReportType>("monthly");
   const [teamId, setTeamId] = useState("all");

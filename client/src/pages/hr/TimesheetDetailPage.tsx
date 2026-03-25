@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import { Link, useParams } from "wouter";
 import { WORK_TYPES } from "@/lib/constants";
 
 export default function TimesheetDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const utils = trpc.useUtils();
   const { data: ts, isLoading } = trpc.timesheets.byId.useQuery({ id: parseInt(id) });

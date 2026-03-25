@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ import { toast } from "sonner";
 import { USER_ROLE_LABELS } from "@/lib/constants";
 
 export default function ManagersPage() {
+  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: allUsers, isLoading } = trpc.users.all.useQuery();
   const { data: teams } = trpc.teams.all.useQuery();

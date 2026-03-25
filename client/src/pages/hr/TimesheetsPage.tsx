@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { HRLayout } from "@/components/HRLayout";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 
 export default function TimesheetsPage() {
+  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: teams } = trpc.teams.all.useQuery();
   const [filters, setFilters] = useState({

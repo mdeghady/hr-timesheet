@@ -3,6 +3,7 @@ import { HRLayout } from "@/components/HRLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   Dialog,
   DialogContent,
@@ -41,6 +42,7 @@ type TeamForm = {
 const emptyForm: TeamForm = { name: "", description: "", projectSite: "", managerId: "" };
 
 export default function TeamsPage() {
+  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: teams, isLoading } = trpc.teams.all.useQuery();
   const { data: managers } = trpc.users.managers.useQuery();
@@ -56,7 +58,7 @@ export default function TeamsPage() {
       utils.teams.all.invalidate();
       setShowForm(false);
       setForm(emptyForm);
-      toast.success("Team created successfully");
+      toast.success(t('teamCreated'));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -67,7 +69,7 @@ export default function TeamsPage() {
       setShowForm(false);
       setEditingId(null);
       setForm(emptyForm);
-      toast.success("Team updated successfully");
+      toast.success(t('teamUpdated'));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -76,13 +78,13 @@ export default function TeamsPage() {
     onSuccess: () => {
       utils.teams.all.invalidate();
       setDeleteId(null);
-      toast.success("Team deactivated");
+      toast.success(t('teamDeleted'));
     },
     onError: (e) => toast.error(e.message),
   });
 
   const handleSubmit = () => {
-    if (!form.name.trim()) return toast.error("Team name is required");
+    if (!form.name.trim()) return toast.error(t('required'));
     const payload = {
       name: form.name.trim(),
       description: form.description || undefined,
@@ -118,11 +120,11 @@ export default function TeamsPage() {
           <div>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-1 w-8 rounded-full bg-accent" />
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Management</span>
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">{t('management')}</span>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Teams</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('teams')}</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {teams?.filter((t) => t.isActive).length ?? 0} active teams
+              {teams?.filter((t) => t.isActive).length ?? 0} {t('activeTeams')}
             </p>
           </div>
           <Button
@@ -130,7 +132,7 @@ export default function TeamsPage() {
             className="gap-2"
           >
             <Plus className="w-4 h-4" />
-            New Team
+            {t('createTeam')}
           </Button>
         </div>
 
@@ -150,8 +152,8 @@ export default function TeamsPage() {
             <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
               <Building2 className="w-8 h-8 text-muted-foreground" />
             </div>
-            <p className="text-foreground font-medium">No teams yet</p>
-            <p className="text-muted-foreground text-sm mt-1">Create your first team to get started.</p>
+            <p className="text-foreground font-medium">{t('noTeams')}</p>
+            <p className="text-muted-foreground text-sm mt-1">{t('createFirstTeam')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -168,12 +170,14 @@ export default function TeamsPage() {
                     <button
                       onClick={() => openEdit(team)}
                       className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                      title={t('edit')}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => setDeleteId(team.id)}
                       className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                      title={t('delete')}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -194,7 +198,7 @@ export default function TeamsPage() {
                   )}
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Users className="w-3.5 h-3.5 flex-shrink-0" />
-                    <span>{getTeamEmployeeCount(team.id)} employees</span>
+                    <span>{getTeamEmployeeCount(team.id)} {t('employees')}</span>
                   </div>
                   {team.managerName && (
                     <div className="flex items-center gap-2 text-xs">
@@ -215,11 +219,11 @@ export default function TeamsPage() {
       <Dialog open={showForm} onOpenChange={(open) => { setShowForm(open); if (!open) { setEditingId(null); setForm(emptyForm); } }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Team" : "Create New Team"}</DialogTitle>
+            <DialogTitle>{editingId ? t('editTeam') : t('createTeam')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label htmlFor="name">Team Name *</Label>
+              <Label htmlFor="name">{t('teamName')} *</Label>
               <Input
                 id="name"
                 value={form.name}
@@ -228,7 +232,7 @@ export default function TeamsPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="site">Project Site</Label>
+              <Label htmlFor="site">{t('projectSite')}</Label>
               <Input
                 id="site"
                 value={form.projectSite}
@@ -237,28 +241,24 @@ export default function TeamsPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="desc">Description</Label>
+              <Label htmlFor="desc">{t('description')}</Label>
               <Input
                 id="desc"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                placeholder="Optional description"
+                placeholder={t('optional')}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Assign Manager</Label>
-              <Select
-                value={form.managerId}
-                onValueChange={(v) => setForm((f) => ({ ...f, managerId: v }))}
-              >
+              <Label>{t('assignManager')}</Label>
+              <Select value={form.managerId} onValueChange={(v) => setForm((f) => ({ ...f, managerId: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a manager" />
+                  <SelectValue placeholder={t('selectManager')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No manager</SelectItem>
                   {managers?.map((m) => (
                     <SelectItem key={m.id} value={String(m.id)}>
-                      {m.name ?? m.email ?? `User #${m.id}`}
+                      {m.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -266,33 +266,32 @@ export default function TeamsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
-              {editingId ? "Save Changes" : "Create Team"}
+            <Button variant="outline" onClick={() => { setShowForm(false); setEditingId(null); setForm(emptyForm); }}>
+              {t('cancel')}
+            </Button>
+            <Button onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>
+              {editingId ? t('update') : t('create')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Deactivate Team?</AlertDialogTitle>
+            <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will deactivate the team. Existing timesheet data will be preserved.
+              {t('deleteTeamWarning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Deactivate
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

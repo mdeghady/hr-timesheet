@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ManagerLayout } from "@/components/ManagerLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ interface EntryState {
 }
 
 export default function TimesheetSubmitPage() {
+  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { isOnline, addOfflineEntry, markSynced } = useOfflineSync();
   const { data: myTeam } = trpc.manager.myTeam.useQuery();

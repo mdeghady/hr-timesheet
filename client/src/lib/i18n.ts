@@ -84,6 +84,14 @@ export const translations = {
     teamDeleted: 'Team deleted successfully',
     noTeams: 'No teams found',
     assignManager: 'Assign Manager',
+    createFirstTeam: 'Create your first team to get started.',
+    management: 'Management',
+    description: 'Description',
+    optional: 'Optional',
+    selectManager: 'Select a manager',
+    confirmDelete: 'Confirm Delete',
+    deleteTeamWarning: 'This action cannot be undone. The team will be deactivated.',
+    required: 'This field is required',
 
     // Employees
     employeesSection: 'Employees',
@@ -190,14 +198,13 @@ export const translations = {
     timesheetSavedOffline: 'Timesheet saved offline. Will sync when connected.',
 
     // Validation
-    required: 'This field is required',
     invalidEmail: 'Please enter a valid email',
     invalidPhone: 'Please enter a valid phone number',
     minLength: 'Must be at least {min} characters',
     maxLength: 'Must be at most {max} characters',
 
     // Messages
-    confirmDelete: 'Are you sure you want to delete this?',
+    confirmDeleteMessage: 'Are you sure you want to delete this?',
     confirmAction: 'Are you sure?',
     operationFailed: 'Operation failed. Please try again.',
     tryAgain: 'Try Again',
@@ -285,6 +292,14 @@ export const translations = {
     teamDeleted: 'تم حذف الفريق بنجاح',
     noTeams: 'لم يتم العثور على فرق',
     assignManager: 'تعيين مدير',
+    createFirstTeam: 'انشئ فريقك الأول للبدء.',
+    management: 'الإدارة',
+    description: 'الوصف',
+    optional: 'اختياري',
+    selectManager: 'اختر مديرا',
+    confirmDelete: 'تأكيد الحذف',
+    deleteTeamWarning: 'لا يمكن التراجع عن هذا الإجراء. سيتم تعطيل الفريق.',
+    required: 'هذا الحقل مطلوب',
 
     // Employees
     employeesSection: 'الموظفون',
@@ -391,14 +406,13 @@ export const translations = {
     timesheetSavedOffline: 'تم حفظ الجدول الزمني دون الاتصال. سيتم المزامنة عند الاتصال.',
 
     // Validation
-    required: 'هذا الحقل مطلوب',
-    invalidEmail: 'يرجى إدخال بريد إلكتروني صحيح',
-    invalidPhone: 'يرجى إدخال رقم هاتف صحيح',
-    minLength: 'يجب أن يكون على الأقل {min} أحرف',
-    maxLength: 'يجب أن يكون على الأكثر {max} أحرف',
+    invalidEmail: 'الرجاء إدخال بريد إلكتروني صحيح',
+    invalidPhone: 'الرجاء إدخال رقم هاتف صحيح',
+    minLength: 'يجب أن يكون {min} على الأقل أحرف',
+    maxLength: 'يجب أن يكون {max} على الأكثر أحرف',
 
     // Messages
-    confirmDelete: 'هل أنت متأكد من رغبتك في حذف هذا؟',
+    confirmDeleteMessage: 'هل أنت متأكد من رغبتك في حذف هذا؟',
     confirmAction: 'هل أنت متأكد؟',
     operationFailed: 'فشل العملية. يرجى المحاولة مرة أخرى.',
     tryAgain: 'حاول مرة أخرى',
