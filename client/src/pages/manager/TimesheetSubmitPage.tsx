@@ -216,7 +216,7 @@ export default function TimesheetSubmitPage() {
 
   return (
     <ManagerLayout>
-      <div className="px-4 pt-6 pb-20">
+      <div className="px-4 pt-6 pb-32 sm:pb-20">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground mb-2">{t('submitDailyTimesheet')}</h1>
@@ -403,12 +403,12 @@ export default function TimesheetSubmitPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex gap-3 justify-end">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex flex-col-reverse sm:flex-row gap-3 sm:justify-end z-50">
           <Button
             variant="outline"
             onClick={handleSave}
             disabled={isSubmitting}
-            className="flex items-center gap-2"
+            className="w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <Save className="w-4 h-4" />
             {t('save')}
@@ -416,7 +416,7 @@ export default function TimesheetSubmitPage() {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || currentStatus === 'submitted' || currentStatus === 'approved'}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90"
           >
             <Send className="w-4 h-4" />
             {t('submitForReview')}
