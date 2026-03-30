@@ -94,3 +94,16 @@
 - [x] Translate all modal/dialog titles and buttons
 - [x] Test all pages in Arabic mode
 - [x] Verify RTL layout on all pages
+
+
+## Phase 10: Manager Portal Translations & Work Types
+- [x] Add work types translations (Regular, Overtime, Holiday, Sick Leave, Absent)
+- [x] Translate Manager Home dashboard with team stats
+- [x] Translate Manager Submit Timesheet page with all form fields
+- [x] Translate Manager History page with filtering
+- [x] Translate all work type labels in both English and Arabic
+- [x] Add manager portal data labels (submission date, review status, etc)
+- [x] Test all Manager pages in both languages
+- [x] Verify work types display correctly in Arabic
+- [x] Test offline sync messages in both languages
+- [x] All tests passing (19 tests)

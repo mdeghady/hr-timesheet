@@ -218,7 +218,7 @@ export default function TimesheetDetailPage() {
                       <td className="px-4 py-3 text-xs text-muted-foreground hidden sm:table-cell">{entry.jobTitle ?? "—"}</td>
                       <td className="px-4 py-3">
                         <span className="text-xs bg-muted px-2 py-0.5 rounded capitalize">
-                          {WORK_TYPES.find((w) => w.value === entry.workType)?.label ?? entry.workType}
+                          {entry.workType}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right font-semibold text-foreground">

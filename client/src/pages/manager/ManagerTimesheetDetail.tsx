@@ -126,7 +126,7 @@ export default function ManagerTimesheetDetail() {
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs bg-muted px-1.5 py-0.5 rounded capitalize">
-                          {WORK_TYPES.find((w) => w.value === entry.workType)?.label ?? entry.workType}
+                          {entry.workType}
                         </span>
                         {entry.notes && (
                           <span className="text-xs text-muted-foreground truncate max-w-[120px]">{entry.notes}</span>
