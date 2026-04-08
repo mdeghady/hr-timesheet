@@ -341,15 +341,21 @@ export const appRouter = router({
         }
 
         for (const entry of input.entries) {
-          if (entry.hoursWorked + (entry.overtimeHours ?? 0) > 24) {
+          const workType = entry.workType ?? "regular";
+          // Non-working statuses should have 0 worked hours
+          const isNonWorkingStatus = ["absent", "sick", "holiday"].includes(workType);
+          const finalHoursWorked = isNonWorkingStatus ? 0 : entry.hoursWorked;
+          const finalOvertimeHours = isNonWorkingStatus ? 0 : (entry.overtimeHours ?? 0);
+
+          if (finalHoursWorked + finalOvertimeHours > 24) {
             throw new TRPCError({ code: "BAD_REQUEST", message: "Total hours cannot exceed 24 per day" });
           }
           await upsertTimesheetEntry({
             timesheetId: input.timesheetId,
             employeeId: entry.employeeId,
-            hoursWorked: String(entry.hoursWorked),
-            overtimeHours: String(entry.overtimeHours ?? 0),
-            workType: entry.workType ?? "regular",
+            hoursWorked: String(finalHoursWorked),
+            overtimeHours: String(finalOvertimeHours),
+            workType: workType,
             notes: entry.notes,
           });
         }

@@ -113,3 +113,16 @@
 - [x] Fix missing "Submit for Review" button on mobile devices
 - [x] Verify button visibility across all screen sizes (mobile, tablet, desktop)
 - [x] Test responsive layout on TimesheetSubmitPage
+
+
+## Phase 12: Worked Hours Calculation Bug Fix
+- [x] Investigate current worked hours calculation logic
+- [x] Implement status-based worked hours logic (0 for Absent/Sick/Holiday)
+- [x] Add test for Absent status → 0 hours
+- [x] Add test for Sick status → 0 hours
+- [x] Add test for Holiday status → 0 hours
+- [x] Add test for Regular status → 8 hours (default)
+- [x] Add test for status change from Regular to Absent
+- [x] Add test for status change from Absent to Regular
+- [x] Verify no regression in existing calculations
+- [x] Run full test suite and verify all pass (34 tests passing)
