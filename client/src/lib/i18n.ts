@@ -146,6 +146,7 @@ export const translations = {
     removeEntry: 'Remove Entry',
     noTimesheets: 'No timesheets found',
     maxHoursPerDay: 'Maximum 16 hours per day',
+    hoursSetToZero: 'Hours automatically set to 0 for non-working status',
     invalidHours: 'Please enter valid hours',
     futureDate: 'Cannot create timesheet for future dates',
 
@@ -403,6 +404,7 @@ export const translations = {
     removeEntry: 'إزالة إدخال',
     noTimesheets: 'لم يتم العثور على جداول زمنية',
     maxHoursPerDay: 'الحد الأقصى 16 ساعة في اليوم',
+    hoursSetToZero: 'تم ضبط الساعات تلقائياً على 0 للحالة غير العاملة',
     invalidHours: 'يرجى إدخال ساعات صحيحة',
     futureDate: 'لا يمكن إنشاء جدول زمني للتواريخ المستقبلية',
 

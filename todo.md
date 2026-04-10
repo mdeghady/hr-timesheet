@@ -126,3 +126,11 @@
 - [x] Add test for status change from Absent to Regular
 - [x] Verify no regression in existing calculations
 - [x] Run full test suite and verify all pass (34 tests passing)
+
+
+## Phase 13: Frontend Hours Input Visibility
+- [x] Hide hours input boxes when non-working status selected (Absent, Sick, Holiday)
+- [x] Show hours input boxes when working status selected (Regular, Overtime)
+- [x] Add smooth transition animation when toggling visibility
+- [x] Test on mobile and desktop devices
+- [x] Verify form submission works correctly with hidden inputs

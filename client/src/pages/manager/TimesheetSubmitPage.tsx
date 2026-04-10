@@ -1,4 +1,3 @@
-import { useTranslation } from "@/hooks/useTranslation";
 import { ManagerLayout } from "@/components/ManagerLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { useTranslation } from "@/hooks/useTranslation";
 import { WORK_TYPES, MAX_HOURS_PER_DAY } from "@/lib/constants";
 import { trpc } from "@/lib/trpc";
 import {
@@ -321,41 +321,51 @@ export default function TimesheetSubmitPage() {
                           </Select>
                         </div>
 
-                        {/* Hours */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                              {t('hoursWorked')}
-                            </Label>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="24"
-                              step="0.5"
-                              value={entry.hoursWorked}
-                              onChange={(e) =>
-                                handleEntryChange(employee.id, "hoursWorked", e.target.value)
-                              }
-                              className="bg-background border-border"
-                            />
+                        {/* Hours - Only show for working statuses */}
+                        {!['absent', 'sick', 'holiday'].includes(entry.workType) && (
+                          <div className="grid grid-cols-2 gap-3 animate-in fade-in duration-200">
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground mb-2 block">
+                                {t('hoursWorked')}
+                              </Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max="24"
+                                step="0.5"
+                                value={entry.hoursWorked}
+                                onChange={(e) =>
+                                  handleEntryChange(employee.id, "hoursWorked", e.target.value)
+                                }
+                                className="bg-background border-border"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground mb-2 block">
+                                {t('overtimeHours')}
+                              </Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max="24"
+                                step="0.5"
+                                value={entry.overtimeHours}
+                                onChange={(e) =>
+                                  handleEntryChange(employee.id, "overtimeHours", e.target.value)
+                                }
+                                className="bg-background border-border"
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                              {t('overtimeHours')}
-                            </Label>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="24"
-                              step="0.5"
-                              value={entry.overtimeHours}
-                              onChange={(e) =>
-                                handleEntryChange(employee.id, "overtimeHours", e.target.value)
-                              }
-                              className="bg-background border-border"
-                            />
+                        )}
+
+                        {/* Non-working status indicator */}
+                        {['absent', 'sick', 'holiday'].includes(entry.workType) && (
+                          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2 animate-in fade-in duration-200">
+                            <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                            <p className="text-sm text-blue-700">{t('hoursSetToZero')}</p>
                           </div>
-                        </div>
+                        )}
 
                         {/* Notes */}
                         <div>
