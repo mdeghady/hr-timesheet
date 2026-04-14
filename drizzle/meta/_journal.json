@@ -15,6 +15,13 @@
       "when": 1773734177991,
       "tag": "0001_wealthy_squirrel_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1775986512002,
+      "tag": "0002_silly_cannonball",
+      "breakpoints": true
     }
   ]
 }

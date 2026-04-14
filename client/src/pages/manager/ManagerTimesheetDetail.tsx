@@ -117,12 +117,12 @@ export default function ManagerTimesheetDetail() {
                   <div key={entry.id} className="flex items-center gap-3 px-4 py-3.5">
                     <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <span className="text-primary text-xs font-bold">
-                        {(entry.firstName ?? "?").charAt(0)}{(entry.lastName ?? "?").charAt(0)}
+                        {(entry.firstName ?? "?").charAt(0)}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground">
-                        {entry.firstName} {entry.lastName}
+                        {entry.firstName}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs bg-muted px-1.5 py-0.5 rounded capitalize">

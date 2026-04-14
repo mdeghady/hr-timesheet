@@ -134,3 +134,14 @@
 - [x] Add smooth transition animation when toggling visibility
 - [x] Test on mobile and desktop devices
 - [x] Verify form submission works correctly with hidden inputs
+
+
+## Phase 14: Employee Status Attribute
+- [ ] Read Excel file and extract employee codes with statuses
+- [ ] Update database schema: remove last_name, add employee_status
+- [ ] Create migration SQL for schema changes
+- [ ] Batch import employee statuses from Excel
+- [ ] Update employee form/UI to remove last name field
+- [ ] Display employee status in timesheet views
+- [ ] Include employee status in Excel export
+- [ ] Test all changes and verify data integrity

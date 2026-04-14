@@ -201,7 +201,7 @@ export async function getAllEmployees() {
       id: employees.id,
       employeeCode: employees.employeeCode,
       firstName: employees.firstName,
-      lastName: employees.lastName,
+      employeeStatus: employees.employeeStatus,
       jobTitle: employees.jobTitle,
       phone: employees.phone,
       email: employees.email,
@@ -212,7 +212,7 @@ export async function getAllEmployees() {
     })
     .from(employees)
     .leftJoin(teams, eq(employees.teamId, teams.id))
-    .orderBy(employees.lastName, employees.firstName);
+    .orderBy(employees.firstName);
 }
 
 export async function getEmployeesByTeamId(teamId: number) {
@@ -222,7 +222,7 @@ export async function getEmployeesByTeamId(teamId: number) {
     .select()
     .from(employees)
     .where(and(eq(employees.teamId, teamId), eq(employees.isActive, true)))
-    .orderBy(employees.lastName, employees.firstName);
+    .orderBy(employees.firstName);
 }
 
 export async function updateEmployee(id: number, data: Partial<InsertEmployee>) {
@@ -334,7 +334,7 @@ export async function getTimesheetWithEntries(id: number) {
       notes: timesheetEntries.notes,
       employeeCode: employees.employeeCode,
       firstName: employees.firstName,
-      lastName: employees.lastName,
+      employeeStatus: employees.employeeStatus,
       jobTitle: employees.jobTitle,
     })
     .from(timesheetEntries)
@@ -489,7 +489,7 @@ export async function getTimesheetEntriesForExport(startDate: string, endDate: s
       managerName: users.name,
       employeeCode: employees.employeeCode,
       firstName: employees.firstName,
-      lastName: employees.lastName,
+      employeeStatus: employees.employeeStatus,
       jobTitle: employees.jobTitle,
       hoursWorked: timesheetEntries.hoursWorked,
       overtimeHours: timesheetEntries.overtimeHours,
@@ -503,7 +503,7 @@ export async function getTimesheetEntriesForExport(startDate: string, endDate: s
     .leftJoin(teams, eq(timesheets.teamId, teams.id))
     .leftJoin(users, eq(timesheets.managerId, users.id))
     .where(and(...conditions))
-    .orderBy(timesheets.workDate, teams.name, employees.lastName);
+    .orderBy(timesheets.workDate, teams.name, employees.firstName);
 }
 
 // ─── Audit Logs ───────────────────────────────────────────────────────────────

@@ -72,7 +72,7 @@ export default function EmployeesPage() {
       const q = search.toLowerCase();
       const matchSearch =
         !q ||
-        `${e.firstName} ${e.lastName}`.toLowerCase().includes(q) ||
+        e.firstName.toLowerCase().includes(q) ||
         e.employeeCode.toLowerCase().includes(q) ||
         (e.jobTitle ?? "").toLowerCase().includes(q);
       const matchTeam = filterTeam === "all" || (filterTeam === "unassigned" ? !e.teamId : String(e.teamId) === filterTeam);
@@ -233,11 +233,11 @@ export default function EmployeesPage() {
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <span className="text-primary text-xs font-bold">
-                              {emp.firstName.charAt(0)}{emp.lastName.charAt(0)}
+                              {emp.firstName.charAt(0)}
                             </span>
                           </div>
                           <span className="font-medium text-foreground">
-                            {emp.firstName} {emp.lastName}
+                            {emp.firstName}
                           </span>
                         </div>
                       </td>

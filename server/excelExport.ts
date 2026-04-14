@@ -46,7 +46,7 @@ export async function generateTimesheetExcel(params: {
   });
 
   // Title row
-  sheet.mergeCells("A1:L1");
+  sheet.mergeCells("A1:N1");
   const titleCell = sheet.getCell("A1");
   titleCell.value = `ConstructHR — ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Timesheet Report`;
   titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_COLOR } };
@@ -55,7 +55,7 @@ export async function generateTimesheetExcel(params: {
   sheet.getRow(1).height = 36;
 
   // Date range row
-  sheet.mergeCells("A2:L2");
+  sheet.mergeCells("A2:N2");
   const dateCell = sheet.getCell("A2");
   dateCell.value = `Period: ${startDate} to ${endDate}${teamId ? " (Filtered by Team)" : " (All Teams)"}`;
   dateCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "2D5A8E" } };
@@ -71,8 +71,8 @@ export async function generateTimesheetExcel(params: {
     { header: "Manager", key: "managerName", width: 20 },
     { header: "Emp. Code", key: "employeeCode", width: 12 },
     { header: "First Name", key: "firstName", width: 16 },
-    { header: "Last Name", key: "lastName", width: 16 },
     { header: "Job Title", key: "jobTitle", width: 20 },
+    { header: "Employee Status", key: "employeeStatus", width: 18 },
     { header: "Work Type", key: "workType", width: 14 },
     { header: "Hours Worked", key: "hoursWorked", width: 14 },
     { header: "Overtime Hrs", key: "overtimeHours", width: 14 },
@@ -101,8 +101,8 @@ export async function generateTimesheetExcel(params: {
       managerName: row.managerName ?? "",
       employeeCode: row.employeeCode,
       firstName: row.firstName,
-      lastName: row.lastName,
       jobTitle: row.jobTitle ?? "",
+      employeeStatus: row.employeeStatus ?? "",
       workType: row.workType,
       hoursWorked: parseFloat(String(row.hoursWorked)),
       overtimeHours: parseFloat(String(row.overtimeHours ?? "0")),
@@ -140,7 +140,7 @@ export async function generateTimesheetExcel(params: {
   sheet.views = [{ state: "frozen", xSplit: 0, ySplit: 3 }];
 
   // Auto-filter
-  sheet.autoFilter = { from: "A3", to: `M3` };
+  sheet.autoFilter = { from: "A3", to: `N3` };
 
   // ── Summary Sheet ─────────────────────────────────────────────────────────────
   const summarySheet = workbook.addWorksheet("Summary by Team");

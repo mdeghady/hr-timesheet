@@ -206,11 +206,11 @@ export default function TimesheetDetailPage() {
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <span className="text-primary text-xs font-bold">
-                              {(entry.firstName ?? "?").charAt(0)}{(entry.lastName ?? "?").charAt(0)}
+                              {(entry.firstName ?? "?").charAt(0)}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-foreground text-xs">{entry.firstName} {entry.lastName}</p>
+                            <p className="font-medium text-foreground text-xs">{entry.firstName}</p>
                             <p className="text-muted-foreground text-xs font-mono">{entry.employeeCode}</p>
                           </div>
                         </div>
