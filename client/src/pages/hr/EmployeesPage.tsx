@@ -35,17 +35,16 @@ import { toast } from "sonner";
 type EmployeeForm = {
   employeeCode: string;
   firstName: string;
-  lastName: string;
   jobTitle: string;
   phone: string;
   email: string;
   teamId: string;
+  employeeStatus?: string;
 };
 
 const emptyForm: EmployeeForm = {
   employeeCode: "",
   firstName: "",
-  lastName: "",
   jobTitle: "",
   phone: "",
   email: "",
@@ -64,6 +63,17 @@ export default function EmployeesPage() {
   const [form, setForm] = useState<EmployeeForm>(emptyForm);
   const [search, setSearch] = useState("");
   const [filterTeam, setFilterTeam] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+
+  // Extract unique statuses from employees
+  const uniqueStatuses = useMemo(() => {
+    if (!employees) return [];
+    const statuses = new Set<string>();
+    employees.forEach((e) => {
+      if (e.employeeStatus) statuses.add(e.employeeStatus);
+    });
+    return Array.from(statuses).sort();
+  }, [employees]);
 
   const filtered = useMemo(() => {
     if (!employees) return [];
@@ -76,9 +86,10 @@ export default function EmployeesPage() {
         e.employeeCode.toLowerCase().includes(q) ||
         (e.jobTitle ?? "").toLowerCase().includes(q);
       const matchTeam = filterTeam === "all" || (filterTeam === "unassigned" ? !e.teamId : String(e.teamId) === filterTeam);
-      return matchSearch && matchTeam;
+      const matchStatus = filterStatus === "all" || e.employeeStatus === filterStatus;
+      return matchSearch && matchTeam && matchStatus;
     });
-  }, [employees, search, filterTeam]);
+  }, [employees, search, filterTeam, filterStatus]);
 
   const createMutation = trpc.employees.create.useMutation({
     onSuccess: () => {
@@ -113,12 +124,10 @@ export default function EmployeesPage() {
   const handleSubmit = () => {
     if (!form.employeeCode.trim()) return toast.error("Employee code is required");
     if (!form.firstName.trim()) return toast.error("First name is required");
-    if (!form.lastName.trim()) return toast.error("Last name is required");
 
     const payload = {
       employeeCode: form.employeeCode.trim(),
       firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
       jobTitle: form.jobTitle || undefined,
       phone: form.phone || undefined,
       email: form.email || undefined,
@@ -136,11 +145,11 @@ export default function EmployeesPage() {
     setForm({
       employeeCode: emp.employeeCode,
       firstName: emp.firstName,
-      lastName: emp.lastName,
       jobTitle: emp.jobTitle ?? "",
       phone: emp.phone ?? "",
       email: emp.email ?? "",
       teamId: emp.teamId ? String(emp.teamId) : "",
+      employeeStatus: emp.employeeStatus ?? "",
     });
     setEditingId(emp.id);
     setShowForm(true);
@@ -190,6 +199,17 @@ export default function EmployeesPage() {
               ))}
             </SelectContent>
           </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="All statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {uniqueStatuses.map((status) => (
+                <SelectItem key={status} value={status}>{status}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Table */}
@@ -216,6 +236,7 @@ export default function EmployeesPage() {
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Code</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden md:table-cell">Job Title</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden xl:table-cell">Status</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden lg:table-cell">Team</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden lg:table-cell">Contact</th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Actions</th>
@@ -243,6 +264,15 @@ export default function EmployeesPage() {
                       </td>
                       <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
                         {emp.jobTitle ?? <span className="text-muted-foreground/50">—</span>}
+                      </td>
+                      <td className="px-4 py-3 text-xs hidden xl:table-cell">
+                        {emp.employeeStatus ? (
+                          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">
+                            {emp.employeeStatus}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/50">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 hidden lg:table-cell">
                         {emp.teamName ? (
@@ -313,12 +343,10 @@ export default function EmployeesPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Last Name *</Label>
-              <Input
-                value={form.lastName}
-                onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-                placeholder="Smith"
-              />
+              <Label>Employee Status</Label>
+              <div className="px-3 py-2 rounded-md border border-input bg-background text-sm text-muted-foreground flex items-center">
+                {form.employeeStatus || <span className="text-muted-foreground/50">—</span>}
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label>Phone</Label>

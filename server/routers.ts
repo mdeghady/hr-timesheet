@@ -204,7 +204,6 @@ export const appRouter = router({
         z.object({
           employeeCode: z.string().min(1).max(32),
           firstName: z.string().min(1).max(64),
-          lastName: z.string().min(1).max(64),
           jobTitle: z.string().optional(),
           phone: z.string().optional(),
           email: z.string().email().optional(),
@@ -230,7 +229,6 @@ export const appRouter = router({
           id: z.number(),
           employeeCode: z.string().min(1).max(32).optional(),
           firstName: z.string().min(1).max(64).optional(),
-          lastName: z.string().min(1).max(64).optional(),
           jobTitle: z.string().optional(),
           phone: z.string().optional(),
           email: z.string().email().optional(),
