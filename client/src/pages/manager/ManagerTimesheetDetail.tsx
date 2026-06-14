@@ -124,10 +124,15 @@ export default function ManagerTimesheetDetail() {
                       <p className="text-sm font-medium text-foreground">
                         {entry.firstName}
                       </p>
-                      <div className="flex items-center gap-2 mt-0.5">
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <span className="text-xs bg-muted px-1.5 py-0.5 rounded capitalize">
                           {entry.workType}
                         </span>
+                        {entry.employeeStatus && (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                            {entry.employeeStatus}
+                          </span>
+                        )}
                         {entry.notes && (
                           <span className="text-xs text-muted-foreground truncate max-w-[120px]">{entry.notes}</span>
                         )}

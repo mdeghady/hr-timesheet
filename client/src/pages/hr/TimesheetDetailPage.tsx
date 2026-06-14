@@ -193,6 +193,7 @@ export default function TimesheetDetailPage() {
                   <tr className="border-b border-border bg-muted/30">
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Employee</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden sm:table-cell">Job Title</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide hidden lg:table-cell">Status</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Work Type</th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Hours</th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Overtime</th>
@@ -216,6 +217,15 @@ export default function TimesheetDetailPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-xs text-muted-foreground hidden sm:table-cell">{entry.jobTitle ?? "—"}</td>
+                      <td className="px-4 py-3 hidden lg:table-cell">
+                        {entry.employeeStatus ? (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                            {entry.employeeStatus}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="text-xs bg-muted px-2 py-0.5 rounded capitalize">
                           {entry.workType}

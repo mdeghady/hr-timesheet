@@ -31,13 +31,15 @@ const alternateRowStyle = {
   ...cellStyle,
 };
 
-function sanitizeSheetName(name: string): string {
+function sanitizeSheetName(name: string, index: number = 0): string {
   // Excel sheet names: max 31 chars, no special chars: \ / ? * [ ]
-  let sanitized = name.replace(/[\\/?\*\[\]]/g, '');
-  if (sanitized.length > 31) {
-    sanitized = sanitized.substring(0, 28) + '...';
+  let sanitized = name.replace(/[\\\/\?\*\[\]]/g, '');
+  const suffix = index > 0 ? ` (${index})` : '';
+  const maxLen = 31 - suffix.length;
+  if (sanitized.length > maxLen) {
+    sanitized = sanitized.substring(0, Math.max(1, maxLen - 3)) + '...';
   }
-  return sanitized || 'Sheet';
+  return (sanitized + suffix) || 'Sheet';
 }
 
 export async function generateTeamsExcel(teamIds: number[]): Promise<Buffer> {
@@ -157,8 +159,20 @@ export async function generateTeamsExcel(teamIds: number[]): Promise<Buffer> {
   // Create Individual Team Sheets
   // ─────────────────────────────────────────────────────────────────────────
 
+  // Track sheet names to handle collisions
+  const sheetNames = new Set<string>();
+  const getUniqueSheetName = (baseName: string): string => {
+    let name = sanitizeSheetName(baseName);
+    let index = 1;
+    while (sheetNames.has(name)) {
+      name = sanitizeSheetName(baseName, index++);
+    }
+    sheetNames.add(name);
+    return name;
+  };
+
   for (const team of selectedTeams) {
-    const sheetName = sanitizeSheetName(team.name);
+    const sheetName = getUniqueSheetName(team.name);
     const teamSheet = workbook.addWorksheet(sheetName, { pageSetup: { paperSize: 9, orientation: 'landscape' } });
 
     // Add team header

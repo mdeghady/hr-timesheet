@@ -137,11 +137,37 @@
 
 
 ## Phase 14: Employee Status Attribute
-- [ ] Read Excel file and extract employee codes with statuses
-- [ ] Update database schema: remove last_name, add employee_status
-- [ ] Create migration SQL for schema changes
-- [ ] Batch import employee statuses from Excel
-- [ ] Update employee form/UI to remove last name field
-- [ ] Display employee status in timesheet views
-- [ ] Include employee status in Excel export
-- [ ] Test all changes and verify data integrity
+- [x] Read Excel file and extract employee codes with statuses
+- [x] Update database schema: remove last_name, add employee_status
+- [x] Create migration SQL for schema changes
+- [x] Batch import employee statuses from Excel
+- [x] Update employee form/UI to remove last name field
+- [x] Display employee status in HR timesheet detail view
+- [x] Display employee status in manager timesheet detail view
+- [x] Include employee status in Excel export
+- [x] Test all changes and verify data integrity
+
+
+## Phase 15: Employee-Team Synchronization
+- [x] Read Excel file with employee-to-team mapping
+- [x] Create teams from Excel if missing
+- [x] Create new employees from Excel if missing
+- [x] Update existing employees with team assignments
+- [x] Handle team reassignments for existing employees
+- [x] Unassign employees not in Excel from their teams
+- [x] Generate migration report with statistics
+- [x] Test with large datasets and special characters
+
+
+## Phase 16: Team Export to Excel Feature
+- [x] Add "Export Teams to Excel" button on Teams page
+- [x] Create team selection modal with checkboxes
+- [x] Add "Export All Teams" quick selection option
+- [x] Build backend export utility with ExcelJS
+- [x] Generate Summary Sheet with all selected teams' employees
+- [x] Generate individual Team Sheets with team details
+- [x] Apply professional formatting (brand colors, frozen headers, alternating rows)
+- [x] Handle file download with date-stamped filename
+- [x] Add loading states and error handling
+- [x] Test export with various team sizes
+- [x] Verify compatibility with Excel, Google Sheets, LibreOffice Calc
