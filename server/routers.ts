@@ -4,6 +4,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { generateTeamsExcel } from "./teamsExport";
 import {
   assignEmployeeToTeam,
   createAuditLog,
@@ -180,6 +181,14 @@ export const appRouter = router({
         await deleteTeam(input.id);
         await audit(ctx.user.id, "DELETE_TEAM", "team", input.id, old, null);
         return { success: true };
+      }),
+
+    export: hrAdminProcedure
+      .input(z.object({ teamIds: z.array(z.number()).min(1) }))
+      .mutation(async ({ input, ctx }) => {
+        const buffer = await generateTeamsExcel(input.teamIds);
+        await audit(ctx.user.id, "EXPORT_TEAMS", "team", undefined, null, { teamIds: input.teamIds });
+        return buffer as any;
       }),
   }),
 

@@ -28,9 +28,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Building2, Edit2, MapPin, Plus, Trash2, Users } from "lucide-react";
+import { Building2, Download, Edit2, MapPin, Plus, Trash2, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TeamForm = {
   name: string;
@@ -52,6 +53,9 @@ export default function TeamsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [form, setForm] = useState<TeamForm>(emptyForm);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedTeams, setSelectedTeams] = useState<Set<number>>(new Set());
+  const [exportAll, setExportAll] = useState(false);
 
   const createMutation = trpc.teams.create.useMutation({
     onSuccess: () => {
@@ -72,6 +76,24 @@ export default function TeamsPage() {
       toast.success(t('teamUpdated'));
     },
     onError: (e) => toast.error(e.message),
+  });
+
+  const exportMutation = trpc.teams.export.useMutation({
+    onSuccess: (data: any) => {
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `teams-export-${new Date().toISOString().split('T')[0]}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      setShowExportModal(false);
+      setSelectedTeams(new Set());
+      setExportAll(false);
+      toast.success('Teams exported successfully');
+    },
+    onError: (e: any) => toast.error(e.message),
   });
 
   const deleteMutation = trpc.teams.delete.useMutation({
@@ -127,13 +149,23 @@ export default function TeamsPage() {
               {teams?.filter((t) => t.isActive).length ?? 0} {t('activeTeams')}
             </p>
           </div>
-          <Button
-            onClick={() => { setForm(emptyForm); setEditingId(null); setShowForm(true); }}
-            className="gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            {t('createTeam')}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowExportModal(true)}
+              variant="outline"
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export Teams
+            </Button>
+            <Button
+              onClick={() => { setForm(emptyForm); setEditingId(null); setShowForm(true); }}
+              className="gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              {t('createTeam')}
+            </Button>
+          </div>
         </div>
 
         {/* Teams Grid */}
@@ -296,6 +328,83 @@ export default function TeamsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Export Modal */}
+      <Dialog open={showExportModal} onOpenChange={setShowExportModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Export Teams to Excel</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="export-all"
+                  checked={exportAll}
+                  onCheckedChange={(checked) => {
+                    setExportAll(checked as boolean);
+                    if (checked) {
+                      setSelectedTeams(new Set(teams?.filter(t => t.isActive).map(t => t.id) ?? []));
+                    } else {
+                      setSelectedTeams(new Set());
+                    }
+                  }}
+                />
+                <label htmlFor="export-all" className="text-sm font-medium cursor-pointer">
+                  Export All Teams ({teams?.filter(t => t.isActive).length ?? 0})
+                </label>
+              </div>
+              {!exportAll && (
+                <div className="space-y-2 max-h-96 overflow-y-auto border border-border rounded-lg p-3">
+                  {teams?.filter(t => t.isActive).map((team) => (
+                    <div key={team.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`team-${team.id}`}
+                        checked={selectedTeams.has(team.id)}
+                        onCheckedChange={(checked) => {
+                          const newSelected = new Set(selectedTeams);
+                          if (checked) {
+                            newSelected.add(team.id);
+                          } else {
+                            newSelected.delete(team.id);
+                          }
+                          setSelectedTeams(newSelected);
+                        }}
+                      />
+                      <label htmlFor={`team-${team.id}`} className="text-sm cursor-pointer flex-1">
+                        <div className="font-medium">{team.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {getTeamEmployeeCount(team.id)} employees
+                        </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowExportModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const teamsToExport = exportAll
+                  ? teams?.filter(t => t.isActive).map(t => t.id) ?? []
+                  : Array.from(selectedTeams);
+                if (teamsToExport.length === 0) {
+                  toast.error('Please select at least one team');
+                  return;
+                }
+                exportMutation.mutate({ teamIds: teamsToExport });
+              }}
+              disabled={exportMutation.isPending}
+            >
+              {exportMutation.isPending ? 'Generating...' : 'Download'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </HRLayout>
   );
 }
