@@ -188,7 +188,8 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         const buffer = await generateTeamsExcel(input.teamIds);
         await audit(ctx.user.id, "EXPORT_TEAMS", "team", undefined, null, { teamIds: input.teamIds });
-        return buffer as any;
+        // Return base64 string for tRPC serialization
+        return buffer.toString('base64');
       }),
   }),
 

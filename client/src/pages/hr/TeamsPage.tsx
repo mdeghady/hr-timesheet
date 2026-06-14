@@ -79,8 +79,14 @@ export default function TeamsPage() {
   });
 
   const exportMutation = trpc.teams.export.useMutation({
-    onSuccess: (data: any) => {
-      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    onSuccess: (base64Data: any) => {
+      // Decode base64 string to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const url = window.URL.createObjectURL(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `teams-export-${new Date().toISOString().split('T')[0]}.xlsx`);
