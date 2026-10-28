@@ -17,6 +17,7 @@ import {
   type InsertTimesheetEntry,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { getCurrentMonthDateRange } from "./teamProgress";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -142,6 +143,45 @@ export async function getAllTeams() {
     .from(teams)
     .leftJoin(users, eq(teams.managerId, users.id))
     .orderBy(teams.name);
+}
+
+export async function getMonthlyTeamProgress() {
+  const db = await getDb();
+  const range = getCurrentMonthDateRange();
+  if (!db) return { ...range, teams: [] };
+
+  const submittedByTeam = await db
+    .select({
+      teamId: timesheets.teamId,
+      submittedDays: sql<number>`COUNT(DISTINCT ${timesheets.workDate})`,
+    })
+    .from(timesheets)
+    .where(
+      and(
+        sql`${timesheets.workDate} >= ${range.startDate}`,
+        sql`${timesheets.workDate} <= ${range.endDate}`,
+        sql`${timesheets.status} <> 'draft'`
+      )
+    )
+    .groupBy(timesheets.teamId);
+
+  const submittedByTeamId = new Map(
+    submittedByTeam.map((row) => [row.teamId, Number(row.submittedDays ?? 0)])
+  );
+
+  return {
+    ...range,
+    teams: (await getAllTeams())
+      .filter((team) => team.isActive)
+      .map((team) => {
+        const submittedDays = submittedByTeamId.get(team.id) ?? 0;
+        return {
+          teamId: team.id,
+          submittedDays,
+          expectedWorkingDays: range.expectedWorkingDays,
+        };
+      }),
+  };
 }
 
 export async function getTeamById(id: number) {

@@ -17,6 +17,7 @@ import {
   getAllHRAdmins,
   getAllManagers,
   getAllTeams,
+  getMonthlyTeamProgress,
   getAllTimesheets,
   getAllUsers,
   getAuditLogs,
@@ -133,6 +134,8 @@ export const appRouter = router({
   // ─── Teams ─────────────────────────────────────────────────────────────────
   teams: router({
     all: protectedProcedure.query(() => getAllTeams()),
+
+    monthlyProgress: protectedProcedure.query(() => getMonthlyTeamProgress()),
 
     byId: protectedProcedure
       .input(z.object({ id: z.number() }))

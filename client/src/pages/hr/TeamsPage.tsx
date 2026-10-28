@@ -28,7 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Building2, Download, Edit2, MapPin, Plus, Trash2, Users } from "lucide-react";
+import { BarChart3, Building2, Download, Edit2, MapPin, Plus, Trash2, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -46,6 +46,7 @@ export default function TeamsPage() {
   const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: teams, isLoading } = trpc.teams.all.useQuery();
+  const { data: monthlyProgress, isLoading: isProgressLoading } = trpc.teams.monthlyProgress.useQuery();
   const { data: managers } = trpc.users.managers.useQuery();
   const { data: employees } = trpc.employees.all.useQuery();
 
@@ -139,6 +140,8 @@ export default function TeamsPage() {
 
   const getTeamEmployeeCount = (teamId: number) =>
     employees?.filter((e) => e.teamId === teamId && e.isActive).length ?? 0;
+
+  const getTeamProgress = (teamId: number) => monthlyProgress?.teams.find((progress) => progress.teamId === teamId);
 
   return (
     <HRLayout>
@@ -237,6 +240,45 @@ export default function TeamsPage() {
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Users className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>{getTeamEmployeeCount(team.id)} {t('employees')}</span>
+                  </div>
+                  <div className="mt-3 rounded-lg bg-muted/45 p-3">
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <BarChart3 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide truncate">
+                          {t('monthlyTimesheetProgress')}
+                        </span>
+                      </div>
+                      {isProgressLoading ? (
+                        <span className="h-3 w-10 rounded bg-muted animate-pulse" />
+                      ) : (
+                        <span className="text-xs font-bold text-foreground">
+                          {getTeamProgress(team.id)?.submittedDays ?? 0}/{getTeamProgress(team.id)?.expectedWorkingDays ?? 0}
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      className="h-2 w-full overflow-hidden rounded-full bg-background/80"
+                      role="progressbar"
+                      aria-label={t('monthlyTimesheetProgress')}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={getTeamProgress(team.id)?.expectedWorkingDays
+                        ? Math.min(100, Math.round(((getTeamProgress(team.id)?.submittedDays ?? 0) / getTeamProgress(team.id)!.expectedWorkingDays) * 100))
+                        : 0}
+                    >
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-primary via-accent to-emerald-400 transition-all duration-500"
+                        style={{
+                          width: `${getTeamProgress(team.id)?.expectedWorkingDays
+                            ? Math.min(100, Math.round(((getTeamProgress(team.id)?.submittedDays ?? 0) / getTeamProgress(team.id)!.expectedWorkingDays) * 100))
+                            : 0}%`,
+                        }}
+                      />
+                    </div>
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
+                      {getTeamProgress(team.id)?.submittedDays ?? 0} {t('submittedWorkingDays').replace('{expected}', String(getTeamProgress(team.id)?.expectedWorkingDays ?? 0))}
+                    </p>
                   </div>
                   {team.managerName && (
                     <div className="flex items-center gap-2 text-xs">

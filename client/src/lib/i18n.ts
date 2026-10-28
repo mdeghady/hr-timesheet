@@ -92,6 +92,8 @@ export const translations = {
     confirmDelete: 'Confirm Delete',
     deleteTeamWarning: 'This action cannot be undone. The team will be deactivated.',
     required: 'This field is required',
+    monthlyTimesheetProgress: 'Monthly timesheets',
+    submittedWorkingDays: 'submitted of {expected} working days',
 
     // Employees
     employeesSection: 'Employees',
@@ -350,6 +352,8 @@ export const translations = {
     confirmDelete: 'تأكيد الحذف',
     deleteTeamWarning: 'لا يمكن التراجع عن هذا الإجراء. سيتم تعطيل الفريق.',
     required: 'هذا الحقل مطلوب',
+    monthlyTimesheetProgress: 'الجداول الزمنية الشهرية',
+    submittedWorkingDays: 'تم إرسالها من أصل {expected} يوم عمل',
 
     // Employees
     employeesSection: 'الموظفون',
