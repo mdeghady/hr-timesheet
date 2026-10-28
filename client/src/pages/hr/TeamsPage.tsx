@@ -46,7 +46,7 @@ export default function TeamsPage() {
   const { t } = useTranslation();
   const utils = trpc.useUtils();
   const { data: teams, isLoading } = trpc.teams.all.useQuery();
-  const { data: monthlyProgress, isLoading: isProgressLoading } = trpc.teams.monthlyProgress.useQuery();
+  const { data: monthlyProgress, isLoading: isProgressLoading, isError: isProgressError } = trpc.teams.monthlyProgress.useQuery();
   const { data: managers } = trpc.users.managers.useQuery();
   const { data: employees } = trpc.employees.all.useQuery();
 
@@ -251,6 +251,8 @@ export default function TeamsPage() {
                       </div>
                       {isProgressLoading ? (
                         <span className="h-3 w-10 rounded bg-muted animate-pulse" />
+                      ) : isProgressError ? (
+                        <span className="text-xs font-semibold text-muted-foreground">—</span>
                       ) : (
                         <span className="text-xs font-bold text-foreground">
                           {getTeamProgress(team.id)?.submittedDays ?? 0}/{getTeamProgress(team.id)?.expectedWorkingDays ?? 0}
@@ -270,14 +272,16 @@ export default function TeamsPage() {
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-primary via-accent to-emerald-400 transition-all duration-500"
                         style={{
-                          width: `${getTeamProgress(team.id)?.expectedWorkingDays
+                          width: `${!isProgressError && getTeamProgress(team.id)?.expectedWorkingDays
                             ? Math.min(100, Math.round(((getTeamProgress(team.id)?.submittedDays ?? 0) / getTeamProgress(team.id)!.expectedWorkingDays) * 100))
                             : 0}%`,
                         }}
                       />
                     </div>
                     <p className="mt-1.5 text-[11px] text-muted-foreground">
-                      {getTeamProgress(team.id)?.submittedDays ?? 0} {t('submittedWorkingDays').replace('{expected}', String(getTeamProgress(team.id)?.expectedWorkingDays ?? 0))}
+                      {isProgressError
+                        ? t('noData')
+                        : `${getTeamProgress(team.id)?.submittedDays ?? 0} ${t('submittedWorkingDays').replace('{expected}', String(getTeamProgress(team.id)?.expectedWorkingDays ?? 0))}`}
                     </p>
                   </div>
                   {team.managerName && (
