@@ -7,6 +7,11 @@ export type SubmissionCalendarDate = {
   status: SubmissionStatus;
 };
 
+function parseIsoDate(isoDate: string) {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
 function formatIsoDate(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
@@ -17,14 +22,27 @@ export function getWorkingDatesForMonth(
   today = new Date()
 ): SubmissionCalendarDate[] {
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return getWorkingDatesBetween(
+    formatIsoDate(year, month, 1),
+    formatIsoDate(year, month, daysInMonth),
+    today
+  );
+}
+
+export function getWorkingDatesBetween(
+  startDate: string,
+  endDate: string,
+  today = new Date()
+): SubmissionCalendarDate[] {
+  const start = parseIsoDate(startDate);
+  const end = parseIsoDate(endDate);
   const todayIso = today.toISOString().slice(0, 10);
   const dates: SubmissionCalendarDate[] = [];
 
-  for (let day = 1; day <= daysInMonth; day += 1) {
-    const date = new Date(Date.UTC(year, month - 1, day));
+  for (const date = new Date(start); date <= end; date.setUTCDate(date.getUTCDate() + 1)) {
     if (date.getUTCDay() === 5) continue;
 
-    const isoDate = formatIsoDate(year, month, day);
+    const isoDate = date.toISOString().slice(0, 10);
     dates.push({
       isoDate,
       label: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", timeZone: "UTC" }),

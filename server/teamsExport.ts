@@ -1,7 +1,6 @@
 import ExcelJS from 'exceljs';
 import { getAllTeams, getTeamById, getEmployeesByTeamId, getAllTimesheets } from './db';
-import { getCurrentMonthDateRange } from './teamProgress';
-import { applySubmissionStatuses, getWorkingDatesForMonth, type SubmissionCalendarDate } from './teamSubmissionReport';
+import { applySubmissionStatuses, getWorkingDatesBetween, type SubmissionCalendarDate } from './teamSubmissionReport';
 
 const BRAND_COLOR = 'FFA500'; // Orange
 const HEADER_COLOR = 'FFE5CC'; // Light orange
@@ -274,23 +273,16 @@ function statusCellStyle(status: SubmissionCalendarDate['status']) {
   return { font: { bold: true, color: { argb: 'FFB91C1C' } }, fill: { type: 'pattern' as const, pattern: 'solid' as const, fgColor: { argb: 'FFFEE2E2' } } };
 }
 
-function excelColumnName(columnNumber: number) {
-  let result = '';
-  let number = columnNumber;
-  while (number > 0) {
-    const remainder = (number - 1) % 26;
-    result = String.fromCharCode(65 + remainder) + result;
-    number = Math.floor((number - 1) / 26);
-  }
-  return result;
-}
-
 export async function generateTeamSubmissionReportExcel(): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  const range = getCurrentMonthDateRange();
-  const dates = getWorkingDatesForMonth(range.year, range.month);
   const activeTeams = (await getAllTeams()).filter((team) => team.isActive);
-  const timesheetRows = await getAllTimesheets({ startDate: range.startDate, endDate: range.endDate });
+  const timesheetRows = await getAllTimesheets();
+  const today = new Date();
+  const todayIso = today.toISOString().slice(0, 10);
+  const recordedDates = timesheetRows.map((row) => new Date(row.workDate).toISOString().slice(0, 10));
+  const startDate = recordedDates.length > 0 ? recordedDates.sort()[0] : todayIso;
+  const dates = getWorkingDatesBetween(startDate, todayIso, today);
+  const expectedWorkingDays = dates.length;
   const submittedByTeam = new Map<number, Set<string>>();
 
   for (const row of timesheetRows) {
@@ -307,22 +299,22 @@ export async function generateTeamSubmissionReportExcel(): Promise<Buffer> {
     const upcoming = calendar.filter((date) => date.status === 'Upcoming').length;
     return { team, calendar, submitted, notSubmitted, upcoming };
   });
-  const monthLabel = new Date(Date.UTC(range.year, range.month - 1, 1)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const reportRangeLabel = `${startDate} through ${todayIso}`;
 
   const overview = workbook.addWorksheet('Executive Summary', { pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true } });
   overview.mergeCells('A1:H1');
-  overview.getCell('A1').value = `Team Timesheet Submission Report — ${monthLabel}`;
+  overview.getCell('A1').value = `Team Timesheet Submission Report — App History`;
   overview.getCell('A1').font = { bold: true, size: 16, color: { argb: 'FF' + BRAND_COLOR } };
   overview.getCell('A1').alignment = { horizontal: 'left' };
   overview.mergeCells('A2:H2');
-  overview.getCell('A2').value = `Working days exclude Fridays · Generated ${new Date().toLocaleString()}`;
+  overview.getCell('A2').value = `Date range: ${reportRangeLabel} · Fridays excluded · Generated ${new Date().toLocaleString()}`;
   overview.getCell('A2').font = { italic: true, size: 10, color: { argb: 'FF64748B' } };
   const overviewHeaders = ['Team', 'Manager', 'Expected Working Days', 'Submitted', 'Not Submitted', 'Upcoming', 'Completion %', 'Board Status'];
   overview.addRow([]);
   overview.addRow(overviewHeaders);
   teamRows.forEach(({ team, submitted, notSubmitted, upcoming }) => {
-    const percentage = range.expectedWorkingDays ? Math.round((submitted / range.expectedWorkingDays) * 100) : 0;
-    const row = overview.addRow([team.name, team.managerName || '—', range.expectedWorkingDays, submitted, notSubmitted, upcoming, percentage / 100, percentage === 100 ? 'Complete' : percentage >= 80 ? 'On Track' : 'Needs Attention']);
+    const percentage = expectedWorkingDays ? Math.round((submitted / expectedWorkingDays) * 100) : 0;
+    const row = overview.addRow([team.name, team.managerName || '—', expectedWorkingDays, submitted, notSubmitted, upcoming, percentage / 100, percentage === 100 ? 'Complete' : percentage >= 80 ? 'On Track' : 'Needs Attention']);
     row.eachCell((cell, index) => { cell.style = index === 8 ? (percentage === 100 ? statusCellStyle('Submitted') : percentage >= 80 ? statusCellStyle('Upcoming') : statusCellStyle('Not Submitted')) : (row.number % 2 === 0 ? cellStyle : alternateRowStyle); });
     row.getCell(7).numFmt = '0%';
   });
@@ -330,22 +322,22 @@ export async function generateTeamSubmissionReportExcel(): Promise<Buffer> {
   overview.columns = [{ width: 28 }, { width: 22 }, { width: 22 }, { width: 14 }, { width: 16 }, { width: 12 }, { width: 15 }, { width: 18 }];
 
   const matrix = workbook.addWorksheet('Submission Matrix', { pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true } });
-  matrix.mergeCells(`A1:${excelColumnName(dates.length + 1)}1`);
-  matrix.getCell('A1').value = `Daily Submission Matrix — ${monthLabel}`;
+  matrix.mergeCells('A1:F1');
+  matrix.getCell('A1').value = `Daily Submission Matrix — App History`;
   matrix.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF' + BRAND_COLOR } };
   matrix.addRow([]);
-  const matrixHeaders = ['Team', ...dates.map((date) => date.label)];
+  const matrixHeaders = ['Team', 'Date', 'Weekday', 'Status', 'Submitted?', 'Report Range'];
   matrix.addRow(matrixHeaders);
   teamRows.forEach(({ team, calendar }) => {
-    const row = matrix.addRow([team.name, ...calendar.map((date) => date.status)]);
-    row.eachCell((cell, index) => {
-      if (index === 1) cell.style = row.number % 2 === 0 ? cellStyle : alternateRowStyle;
-      else { const status = calendar[index - 2]?.status; cell.style = status ? statusCellStyle(status) : cellStyle; }
-      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    calendar.forEach((date) => {
+      const row = matrix.addRow([team.name, date.isoDate, date.weekday, date.status, date.status === 'Submitted' ? 'Yes' : date.status === 'Upcoming' ? 'Pending' : 'No', reportRangeLabel]);
+      row.eachCell((cell) => { cell.style = cellStyle; cell.alignment = { vertical: 'middle', wrapText: true }; });
+      row.getCell(4).style = statusCellStyle(date.status);
+      row.getCell(5).style = statusCellStyle(date.status);
     });
   });
   applyTableStyle(matrix, 3, matrixHeaders.length);
-  matrix.columns = [{ width: 28 }, ...dates.map(() => ({ width: 14 }))];
+  matrix.columns = [{ width: 28 }, { width: 15 }, { width: 15 }, { width: 18 }, { width: 14 }, { width: 28 }];
 
   const sheetNames = new Set<string>();
   for (const { team, calendar, submitted, notSubmitted, upcoming } of teamRows) {
@@ -354,13 +346,13 @@ export async function generateTeamSubmissionReportExcel(): Promise<Buffer> {
     sheet.mergeCells('A1:F1');
     sheet.getCell('A1').value = `${team.name} — Submission Calendar`;
     sheet.getCell('A1').font = { bold: true, size: 14, color: { argb: 'FF' + BRAND_COLOR } };
-    sheet.addRow(['Manager', team.managerName || '—', 'Expected Days', range.expectedWorkingDays, 'Completion', range.expectedWorkingDays ? submitted / range.expectedWorkingDays : 0]);
+    sheet.addRow(['Manager', team.managerName || '—', 'Expected Days', expectedWorkingDays, 'Completion', expectedWorkingDays ? submitted / expectedWorkingDays : 0]);
     sheet.getRow(2).getCell(6).numFmt = '0%';
     sheet.addRow(['Submitted', submitted, 'Not Submitted', notSubmitted, 'Upcoming', upcoming]);
     sheet.addRow([]);
-    sheet.addRow(['Date', 'Weekday', 'Status', 'Submitted?', 'Notes', 'Month']);
+    sheet.addRow(['Date', 'Weekday', 'Status', 'Submitted?', 'Notes', 'Report Range']);
     calendar.forEach((date) => {
-      const row = sheet.addRow([date.isoDate, date.weekday, date.status, date.status === 'Submitted' ? 'Yes' : date.status === 'Upcoming' ? 'Pending' : 'No', date.status === 'Upcoming' ? 'Future working day' : '', monthLabel]);
+      const row = sheet.addRow([date.isoDate, date.weekday, date.status, date.status === 'Submitted' ? 'Yes' : date.status === 'Upcoming' ? 'Pending' : 'No', date.status === 'Upcoming' ? 'Future working day' : '', reportRangeLabel]);
       row.eachCell((cell) => { cell.style = cellStyle; cell.alignment = { vertical: 'middle', wrapText: true }; });
       row.getCell(3).style = statusCellStyle(date.status);
       row.getCell(4).style = statusCellStyle(date.status);
