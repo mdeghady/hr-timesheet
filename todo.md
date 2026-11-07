@@ -1,12 +1,10 @@
 
-
-## Phase 17: Monthly Team Timesheet Completion Progress
-- [x] Add a backend query that calculates each team's current-month submitted timesheets
-- [x] Exclude Fridays from the current month's expected working days
-- [x] Return team progress metrics with safe zero-day handling and date boundaries
-- [x] Add a progress bar and submitted/expected label to every team card
-- [x] Add loading, empty, and error states without disrupting team management actions
-- [x] Support English and Arabic labels plus RTL-friendly layout
-- [x] Add backend tests for Friday exclusion, current-month boundaries, and progress values
-- [x] Run the full test suite and verify the production build
-- [x] Save a new checkpoint and redeploy the updated experience
+## Phase 18: Board-Ready Team Submission Report
+- [x] Add an HR-only download button to the Teams page for all active teams
+- [x] Generate an executive summary with submitted, missing, upcoming, and completion metrics
+- [x] Generate a daily submission matrix with Friday exclusion and status colors
+- [x] Generate individual team submission-calendar sheets
+- [x] Add Base64 download handling, audit logging, and loading/error feedback
+- [x] Add English and Arabic labels for the new report action
+- [x] Add date-classification tests and verify the existing export remains functional
+- [x] Run the full test suite, TypeScript check, and production build

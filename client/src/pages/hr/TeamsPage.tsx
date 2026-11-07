@@ -28,7 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { BarChart3, Building2, Download, Edit2, MapPin, Plus, Trash2, Users } from "lucide-react";
+import { BarChart3, Building2, Download, Edit2, FileSpreadsheet, MapPin, Plus, Trash2, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -103,6 +103,24 @@ export default function TeamsPage() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const submissionReportMutation = trpc.teams.submissionReport.useMutation({
+    onSuccess: (base64Data: any) => {
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+      const url = window.URL.createObjectURL(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `team-submission-report-${new Date().toISOString().slice(0, 7)}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(t('submissionReportDownloaded'));
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const deleteMutation = trpc.teams.delete.useMutation({
     onSuccess: () => {
       utils.teams.all.invalidate();
@@ -159,6 +177,17 @@ export default function TeamsPage() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button
+              onClick={() => submissionReportMutation.mutate()}
+              variant="outline"
+              className="gap-2"
+              disabled={submissionReportMutation.isPending}
+              title={t('submissionReportHelp')}
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span className="hidden xl:inline">{submissionReportMutation.isPending ? t('generatingReport') : t('submissionReport')}</span>
+              <span className="xl:hidden">{submissionReportMutation.isPending ? '…' : 'Report'}</span>
+            </Button>
             <Button
               onClick={() => setShowExportModal(true)}
               variant="outline"

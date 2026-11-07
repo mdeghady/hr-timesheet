@@ -164,6 +164,10 @@ export const translations = {
     allTeams: 'All Teams',
     generateReport: 'Generate Report',
     reportGenerated: 'Report generated successfully',
+    submissionReport: 'Board Submission Report',
+    submissionReportHelp: 'Download all teams with submitted and missing working dates',
+    generatingReport: 'Generating...',
+    submissionReportDownloaded: 'Board submission report downloaded successfully',
 
     // Audit Trail
     auditTrailSection: 'Audit Trail',
@@ -424,6 +428,10 @@ export const translations = {
     allTeams: 'جميع الفرق',
     generateReport: 'إنشاء تقرير',
     reportGenerated: 'تم إنشاء التقرير بنجاح',
+    submissionReport: 'تقرير إرسال الجداول للمجلس',
+    submissionReportHelp: 'تحميل جميع الفرق مع تواريخ الإرسال والتواريخ غير المرسلة',
+    generatingReport: 'جاري الإنشاء...',
+    submissionReportDownloaded: 'تم تحميل تقرير إرسال الجداول بنجاح',
 
     // Audit Trail
     auditTrailSection: 'سجل التدقيق',

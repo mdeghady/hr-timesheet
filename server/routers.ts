@@ -4,7 +4,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { generateTeamsExcel } from "./teamsExport";
+import { generateTeamSubmissionReportExcel, generateTeamsExcel } from "./teamsExport";
 import {
   assignEmployeeToTeam,
   createAuditLog,
@@ -192,6 +192,13 @@ export const appRouter = router({
         const buffer = await generateTeamsExcel(input.teamIds);
         await audit(ctx.user.id, "EXPORT_TEAMS", "team", undefined, null, { teamIds: input.teamIds });
         // Return base64 string for tRPC serialization
+        return buffer.toString('base64');
+      }),
+
+    submissionReport: hrAdminProcedure
+      .mutation(async ({ ctx }) => {
+        const buffer = await generateTeamSubmissionReportExcel();
+        await audit(ctx.user.id, "EXPORT_TEAM_SUBMISSION_REPORT", "team", undefined, null, { scope: "all_active_teams", month: "current" });
         return buffer.toString('base64');
       }),
   }),
